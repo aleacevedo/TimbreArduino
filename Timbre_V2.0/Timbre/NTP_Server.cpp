@@ -13,7 +13,7 @@
 
 #include "NTP_Server.h"
 
-bool ntpCheckTime (tmElements_t &tm){
+bool ntpCheckTime (time_t &tm){
 
   EthernetUDP udp;
   static int udpInited = udp.begin(123); // open socket on arbitrary port
@@ -72,9 +72,7 @@ bool ntpCheckTime (tmElements_t &tm){
   udp.flush();
   udp.stop();
 
-  time = time - 2208988800ul + TIME_ZONE * SECS_PER_HOUR; // convert NTP time to Unix time
-
-  breakTime(time,tm);
+  tm = time - 2208988800ul + TIME_ZONE * SECS_PER_HOUR; // convert NTP time to Unix time
 
   return 	true;
 }

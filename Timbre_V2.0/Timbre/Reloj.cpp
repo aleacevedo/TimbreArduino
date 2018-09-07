@@ -1,9 +1,9 @@
 #include "Reloj.h"
 
 bool actualizarHorario(){
-  tmElements_t horarioActual;
+  time_t horarioActual;
   if(ntpCheckTime(horarioActual)){
-    return RTC.write(horarioActual);
+    return RTC.set(horarioActual);
   }
   return false;
 }

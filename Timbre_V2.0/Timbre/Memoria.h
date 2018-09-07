@@ -15,6 +15,7 @@
 #define CORTE_LUZ 276 //Direccion donde se encuentra el estado de la luz
 #define ACTUALIZACION_HORARIO 277 //Direccion donde se encuentra el ultimo dia en el que se actualizo el horario
 #define ULTIMO_LEIDO 279 // Direccion donde se encuentra el indice del ultimo horario leido
+#define ULTIMA_ACTIVACION 280 // Direccion donde se encuentra la informacion de la ultima activacion del timbre
 
 
 byte obtenerCantidadHorarios();
@@ -27,6 +28,9 @@ byte obtenerPosicion(byte indice);
 byte obtenerDuracionLarga();
 byte obtenerDuracionCorta();
 byte obtenerUltimoLeido();
+byte obtenerHoraUltimaActivacion();
+byte obtenerMinutoUltimaActivacion();
+byte obtenerDiaUltimaActivacion();
 void sumarCantidadHorarios();
 void restarCantidadHorarios();
 void setearDuracionLarga(byte duracion);
@@ -35,6 +39,7 @@ void restaurarDeFabrica();
 void seActualizoElHorario(byte dia);
 void sumarUltimoLeido();
 void resetearUltimoLeido();
+void setearUltimaActivacion(byte hora, byte minuto, byte dia);
 bool agregarHorario(byte hora, byte minutos, byte duracion);
 bool setearSilencios(byte indice, byte dias);
 bool restarSilencios(byte indice);

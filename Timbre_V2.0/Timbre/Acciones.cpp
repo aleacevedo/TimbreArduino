@@ -16,37 +16,49 @@ String borrarUnHorario(String indice){
 
 String obtenerUnHorario(String nada){
   byte indice = obtenerUltimoLeido();
-  if(indice == obtenerCantidadHorarios()){
+  String respuesta = "";
+  if(indice >= obtenerCantidadHorarios()){
     resetearUltimoLeido();
     return "FIN";
   }
   sumarUltimoLeido();
+  respuesta.concat(obtenerHora(indice));
+  respuesta.concat(":");
+  respuesta.concat(obtenerMinutos(indice));
   if(esLargo(indice)){
-    return String(obtenerHora(indice)) + ":" + String(obtenerMinutos(indice)) + ":L:" + String(obtenerSilencios(indice));
+    respuesta.concat(":L:");
   }else{
-    return String(obtenerHora(indice)) + ":" + String(obtenerMinutos(indice)) + ":C:" + String(obtenerSilencios(indice));
+    respuesta.concat(":C:");
   }
+  respuesta.concat(obtenerSilencios(indice));
+  return respuesta;
 }
 
 String configurarHoraActual(String horario){
-  tmElements_t horaActual;
-  if(horario.equals("AUTO")){
-    if(!actualizarHorario()){return "FALLO";}
-    return "OK";
+  if(horario[0]=='A'){
+    seActualizoElHorario(10);
+    return "OK AUTO";
   }
-  byte hora = horario.substring(0, horario.indexOf(':')).toInt();
-  byte minutos = horario.substring(horario.indexOf(':')+1).toInt();
-  horaActual.Hour = hora;
-  horaActual.Minute = minutos;
+  tmElements_t horaActual;
+  horaActual.Hour = horario.substring(0, horario.indexOf(':')).toInt();
+  horaActual.Minute = horario.substring(horario.indexOf(':')+1, horario.indexOf(':')+3).toInt();
+  horaActual.Wday = horario.substring(horario.indexOf(':')+4).toInt();;
   horaActual.Second = 0;
   setearHorario(horaActual);
+  seActualizoElHorario(horaActual.Wday);
   return "OK";
 }
 
 String obtenerHoraActual(String nada){
+  String respuesta = "";
   tmElements_t horaActual;
   obtenerHorario(horaActual);
-  return String(horaActual.Hour) + ":" + String(horaActual.Minute);
+  respuesta.concat(horaActual.Hour);
+  respuesta.concat(":");
+  respuesta.concat(horaActual.Minute);
+  respuesta.concat(":");
+  respuesta.concat(horaActual.Wday);
+  return respuesta;
 }
 
 String obtenerModoVacaciones(String nada){
@@ -94,13 +106,13 @@ String configurarDuracion(String duracion){
 }
 
 String obtenerDuracion(String nada){
-  return "L:" + String(obtenerDuracionLarga()) + "/L:" + String(obtenerDuracionCorta());
+  return "L:" + String(obtenerDuracionLarga()) + "/C:" + String(obtenerDuracionCorta());
 }
 
 String configurarSilencios(String data){
   byte indice = data.substring(0,data.indexOf(':')).toInt();
-  byte cantidad = data.substring(data.indexOf(':')).toInt();
-  setearSilencios(indice, cantidad);
+  byte cantidad = data.substring(data.indexOf(':')+1).toInt();
+  if(!setearSilencios(indice, cantidad)){return "FALLO";}
   return "OK";
 }
 

@@ -4,4 +4,4 @@
 
 #define TIME_ZONE -3
 
-bool ntpCheckTime (tmElements_t &tm);
+bool ntpCheckTime (time_t &tm);

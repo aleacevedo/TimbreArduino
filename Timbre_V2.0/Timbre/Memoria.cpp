@@ -43,6 +43,18 @@ byte obtenerUltimoLeido(){
   return EEPROM.read(ULTIMO_LEIDO);
 }
 
+byte obtenerHoraUltimaActivacion(){
+  return EEPROM.read(ULTIMA_ACTIVACION);
+}
+
+byte obtenerMinutoUltimaActivacion(){
+  return EEPROM.read(ULTIMA_ACTIVACION+1);
+}
+
+byte obtenerDiaUltimaActivacion(){
+  return EEPROM.read(ULTIMA_ACTIVACION+2);
+}
+
 void sumarCantidadHorarios(){
   // Aumenta en uno la cantidad de horarios
   EEPROM.write(CANT_HORARIOS, obtenerCantidadHorarios()+1);
@@ -71,6 +83,12 @@ void sumarUltimoLeido(){
 
 void resetearUltimoLeido(){
   EEPROM.write(ULTIMO_LEIDO, 0);
+}
+
+void setearUltimaActivacion(byte hora, byte minuto, byte dia){
+  EEPROM.write(ULTIMA_ACTIVACION, hora);
+  EEPROM.write(ULTIMA_ACTIVACION+1, minuto);
+  EEPROM.write(ULTIMA_ACTIVACION+2, dia);
 }
 
 bool agregarHorario(byte hora, byte minutos, byte duracion){
@@ -156,7 +174,7 @@ bool estaEnVacaciones(){
 
 void restaurarDeFabrica(){
   for(int i = 0; i<=256; i++){
-    EEPROM.write(i,0);
+    EEPROM.write(i,255);
   }
   for(byte i = 0; i<=7; i++){
     desmarcarDiaLibre(i);
