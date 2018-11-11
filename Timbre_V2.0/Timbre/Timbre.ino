@@ -16,7 +16,7 @@ static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?"
 
 //REST Server
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xFF};
-IPAddress ip(192, 168, 0, 210); 
+IPAddress ip(192, 168, 0, 177); 
 EthernetServer server = EthernetServer(35);
 
 tmElements_t horaActual;
@@ -36,11 +36,13 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (digitalRead(8) == 1 && huboCorteDeLuz()) {
     volvioLaLuz();
+    if(DEBUG){Serial.println(F("VOLVIO LA LUZ"));}
     Ethernet.begin(mac, ip);
   }
 
   if(digitalRead(8) == 0 && !huboCorteDeLuz()){
     seCortoLaLuz();
+    if(DEBUG){Serial.println(F("SE CORTO LA LUZ"));}
   }
 
   obtenerHorario(horaActual);
