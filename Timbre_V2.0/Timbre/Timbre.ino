@@ -8,7 +8,7 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
@@ -59,6 +59,7 @@ void loop() {
           setearUltimaActivacion(obtenerHora(i), obtenerMinutos(i), horaActual.Wday);
           if(obtenerSilencios(i)==0){
             sonarAlarma(esLargo(i));
+          }else if(obtenerSilencios(i)==255){
           }else{
             restarSilencios(i);
           }
