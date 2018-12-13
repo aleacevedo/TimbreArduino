@@ -11,12 +11,22 @@
  */
 
 
-#include "NTP_Server.h"
+#include "AccionesUDP.h"
 
 EthernetUDP udp;
 
-void setUdp(EthernetUDP udpB){
-  udp = udpB;
+IPAddress ipBroadcast(255, 255, 255, 255); 
+
+void setUdp(){
+  udp.begin(LOCAL_PORT);
+}
+
+void annoucmentUdp(IPAddress ip){
+  char packetBuffer[20];  // buffer to hold incoming packet,
+  sprintf(packetBuffer, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+  udp.beginPacket(ipBroadcast, BROADCAST_PORT);
+  udp.write(packetBuffer);
+  udp.endPacket();
 }
 
 bool ntpCheckTime (time_t &tm){
@@ -35,25 +45,25 @@ bool ntpCheckTime (time_t &tm){
     return false;
 
   // Clear received data from possible stray received packets
-  while (udp.parsePacket() > 0) ; // discard any previously received packets
+  udp.flush();
 
   // Send an NTP request
   if (! (udp.beginPacket(timeServer, 123) // 123 is the NTP port
-   && udp.write((byte *)&ntpFirstFourBytes, 48) == 48
-   && udp.endPacket()))
-    return false;       // sending request failed
+	 && udp.write((byte *)&ntpFirstFourBytes, 48) == 48
+	 && udp.endPacket()))
+    return false;				// sending request failed
 
   // Wait for response; check every pollIntv ms up to maxPoll times
-  const int pollIntv = 150;   // poll every this many ms
-  const byte maxPoll = 15;    // poll up to this many times
-  int pktLen;       // received packet length
+  const int pollIntv = 150;		// poll every this many ms
+  const byte maxPoll = 15;		// poll up to this many times
+  int pktLen;				// received packet length
   for (byte i=0; i<maxPoll; i++) {
     if ((pktLen = udp.parsePacket()) == 48)
       break;
     delay(pollIntv);
   }
   if (pktLen != 48)
-    return false;       // no correct packet received
+    return false;				// no correct packet received
 
   // Read and discard the first useless bytes
   // Set useless to 32 for speed; set to 40 for accuracy.
@@ -62,7 +72,7 @@ bool ntpCheckTime (time_t &tm){
     udp.read();
 
   // Read the integer part of sending time
-  unsigned long time = udp.read();  // NTP time
+  unsigned long time = udp.read();	// NTP time
   for (byte i = 1; i < 4; i++)
     time = time << 8 | udp.read();
 
@@ -74,7 +84,11 @@ bool ntpCheckTime (time_t &tm){
   // since its arrival, which we assume on average to be pollIntv/2.
   time += (udp.read() > 115 - pollIntv/8);
 
+  // Discard the rest of the packet
+  udp.flush();
+  udp.stop();
+
   tm = time - 2208988800ul + TIME_ZONE * SECS_PER_HOUR; // convert NTP time to Unix time
 
-  return  true;
+  return 	true;
 }

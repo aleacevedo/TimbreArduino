@@ -4,6 +4,7 @@
 #include <EEPROM.h>
 #include <stdint.h>
 
+#include "AccionesUDP.h"
 #include "Reloj.h"
 #include "Memoria.h"
 #include "Acciones.h"
@@ -16,7 +17,7 @@ static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?"
 
 //REST Server
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xCC};
-IPAddress ip(192, 168, 0, 179); 
+//IPAddress ip(192, 168, 0, 179); 
 EthernetServer server = EthernetServer(35);
 
 tmElements_t horaActual;
@@ -25,7 +26,8 @@ void setup() {
   // put Ayour setup code here, to run once:
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
-  Ethernet.begin(mac, ip);
+  Ethernet.begin(mac);
+  setUdp();
   server.begin();
   Serial.begin(9600);
   seActualizoElHorario(10);
@@ -34,10 +36,18 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+  obtenerHorario(horaActual);
+  if((horaActual.Second - obtenerUltimoAnuncio()) > 30 || (horaActual.Second - obtenerUltimoAnuncio()) < 0){
+    if(DEBUG){Serial.println(F("ME ANUNCIO"));}
+    annoucmentUdp(Ethernet.localIP());
+    setearUltimoAnuncio(horaActual.Second);
+  }
+  
   if (digitalRead(8) == 1 && huboCorteDeLuz()) {
     volvioLaLuz();
     if(DEBUG){Serial.println(F("VOLVIO LA LUZ"));}
-    Ethernet.begin(mac, ip);
+    Ethernet.begin(mac);
   }
 
   if(digitalRead(8) == 0 && !huboCorteDeLuz()){
@@ -45,7 +55,6 @@ void loop() {
     if(DEBUG){Serial.println(F("SE CORTO LA LUZ"));}
   }
 
-  obtenerHorario(horaActual);
   if(!estaActualizadoElHorario(horaActual.Wday)){
     if(DEBUG){Serial.println(F("ACTUALIZACION DIARIA DE HORARIO"));}
     actualizarHorario();

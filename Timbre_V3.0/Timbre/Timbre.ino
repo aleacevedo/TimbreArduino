@@ -17,16 +17,17 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
 static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?", "DS", "D?", "SS", "RE"};
 
 //REST Server
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xFF};
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xBB};
 IPAddress ip(192, 168, 0, 178 ); 
 EthernetServer server = EthernetServer(35);
+EthernetUDP udpB;
 
 tmElements_t horaActual;
 
@@ -36,9 +37,11 @@ void setup() {
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
   Ethernet.begin(mac, ip);
+  udpB.begin(8080);
+  setUdp(udpB);
   server.begin();
   Serial.begin(9600);
-  //actualizarHorario();
+  seActualizoElHorario(10);
   if(DEBUG){Serial.println(F("Inicializo"));}
 }
 

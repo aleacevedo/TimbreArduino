@@ -11,12 +11,23 @@
  */
 
 
-#include "NTP_Server.h"
+#include "AccionesUDP.h"
 
 EthernetUDP udp;
 
-void setUdp(EthernetUDP udpB){
-  udp = udpB;
+IPAddress ipBroadcast(255, 255, 255, 255); 
+
+
+void setUdp(){
+  udp.begin(LOCAL_PORT);
+}
+
+void annoucmentUdp(IPAddress ip){
+  char packetBuffer[UDP_TX_PACKET_MAX_SIZE];  // buffer to hold incoming packet,
+  sprintf(packetBuffer, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+  udp.beginPacket(ipBroadcast, BROADCAST_PORT);
+  udp.write(packetBuffer);
+  udp.endPacket();
 }
 
 bool ntpCheckTime (time_t &tm){
