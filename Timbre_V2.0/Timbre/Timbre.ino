@@ -8,15 +8,15 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
 static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?", "DS", "D?", "SS", "RE"};
 
 //REST Server
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xCC};
-IPAddress ip(192, 168, 0, 179); 
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xBB};
+IPAddress ip(192, 168, 0, 178); 
 EthernetServer server = EthernetServer(35);
 
 tmElements_t horaActual;

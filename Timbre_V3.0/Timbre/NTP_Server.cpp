@@ -15,8 +15,8 @@
 
 EthernetUDP udp;
 
-void setUdp(EthernetUDP udpB){
-  udp = udpB;
+void setUdp(){
+  udp.begin(LOCAL_PORT);
 }
 
 bool ntpCheckTime (time_t &tm){

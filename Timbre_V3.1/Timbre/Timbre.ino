@@ -1,3 +1,7 @@
+/***** MUY IMPORTANTE *****/
+// Cambiar mac address
+// Cambiar ID en AccionesUDP.cpp
+
 #include <Wire.h>
 #include <EthernetClient.h>
 #include <Ethernet.h>
@@ -16,15 +20,14 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
 static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?", "DS", "D?", "SS", "RE"};
 
 //REST Server
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xBB};
-//IPAddress ip(192, 168, 0, 178 ); 
+byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xCC};
 EthernetServer server = EthernetServer(35);
 
 tmElements_t horaActual;
@@ -44,8 +47,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  Ethernet.maintain();  
+  
   obtenerHorario(horaActual);
-  if((horaActual.Second - obtenerUltimoAnuncio()) > 30 || (horaActual.Second - obtenerUltimoAnuncio()) < 0){
+  if((horaActual.Second - obtenerUltimoAnuncio()) > 10 || (horaActual.Second - obtenerUltimoAnuncio()) < 0){
     if(DEBUG){Serial.println(F("ME ANUNCIO"));}
     annoucmentUdp(Ethernet.localIP());
     setearUltimoAnuncio(horaActual.Second);

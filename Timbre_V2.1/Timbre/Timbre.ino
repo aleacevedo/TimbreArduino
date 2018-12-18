@@ -17,7 +17,7 @@ static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?"
 
 //REST Server
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xCC};
-//IPAddress ip(192, 168, 0, 179); 
+IPAddress ip(192, 168, 0, 179); 
 EthernetServer server = EthernetServer(35);
 
 tmElements_t horaActual;
@@ -26,7 +26,7 @@ void setup() {
   // put Ayour setup code here, to run once:
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
-  Ethernet.begin(mac);
+  Ethernet.begin(mac,ip);
   setUdp();
   server.begin();
   Serial.begin(9600);
@@ -47,7 +47,7 @@ void loop() {
   if (digitalRead(8) == 1 && huboCorteDeLuz()) {
     volvioLaLuz();
     if(DEBUG){Serial.println(F("VOLVIO LA LUZ"));}
-    Ethernet.begin(mac);
+    Ethernet.begin(mac,ip);
   }
 
   if(digitalRead(8) == 0 && !huboCorteDeLuz()){

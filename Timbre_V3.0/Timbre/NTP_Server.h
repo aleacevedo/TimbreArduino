@@ -6,6 +6,7 @@
 #include <SPI.h>
 
 #define TIME_ZONE -3
+#define LOCAL_PORT 8080
 
 bool ntpCheckTime (time_t &tm);
-void setUdp(EthernetUDP udpB);
+void setUdp();

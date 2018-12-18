@@ -27,7 +27,6 @@ static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?"
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xBB};
 IPAddress ip(192, 168, 0, 178 ); 
 EthernetServer server = EthernetServer(35);
-EthernetUDP udpB;
 
 tmElements_t horaActual;
 
@@ -37,8 +36,7 @@ void setup() {
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
   Ethernet.begin(mac, ip);
-  udpB.begin(8080);
-  setUdp(udpB);
+  setUdp();
   server.begin();
   Serial.begin(9600);
   seActualizoElHorario(10);

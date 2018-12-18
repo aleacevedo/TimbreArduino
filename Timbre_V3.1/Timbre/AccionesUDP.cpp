@@ -1,4 +1,4 @@
-/*
+  /*
  * © Francesco Potortì 2013 - GPLv3 - Revision: 1.13
  *
  * Send an NTP packet and wait for the response, return the Unix time
@@ -16,7 +16,7 @@
 EthernetUDP udp;
 
 IPAddress ipBroadcast(255, 255, 255, 255); 
-
+char* ID_ = "0000"; //Hexa
 
 void setUdp(){
   udp.begin(LOCAL_PORT);
@@ -24,7 +24,7 @@ void setUdp(){
 
 void annoucmentUdp(IPAddress ip){
   char packetBuffer[UDP_TX_PACKET_MAX_SIZE];  // buffer to hold incoming packet,
-  sprintf(packetBuffer, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+  sprintf(packetBuffer, "%s:%d.%d.%d.%d:\0",ID_, ip[0], ip[1], ip[2], ip[3]);
   udp.beginPacket(ipBroadcast, BROADCAST_PORT);
   udp.write(packetBuffer);
   udp.endPacket();

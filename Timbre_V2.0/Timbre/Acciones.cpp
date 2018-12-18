@@ -106,7 +106,7 @@ String configurarDuracion(String duracion){
 }
 
 String obtenerDuracion(String nada){
-  return "L:" + String(obtenerDuracionLarga()) + "/C:" + String(obtenerDuracionCorta());
+  return  String(obtenerDuracionLarga()) + "/" + String(obtenerDuracionCorta());
 }
 
 String configurarSilencios(String data){
