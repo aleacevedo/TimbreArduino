@@ -15,8 +15,10 @@
 #define CORTE_LUZ 276 //Direccion donde se encuentra el estado de la luz
 #define ACTUALIZACION_HORARIO 277 //Direccion donde se encuentra el ultimo dia en el que se actualizo el horario
 #define ULTIMO_LEIDO 279 // Direccion donde se encuentra el indice del ultimo horario leido
-#define ULTIMA_ACTIVACION 280 // Direccion donde se encuentra la informacion de la ultima activacion del timbre
-#define ULTIMO_ANUNCIO 281 // Direccion donde se encuentra la informacion del ultimo anuncion
+#define ULTIMA_ACTIVACION 280 // Direccion donde se encuentra la informacion de la ultima activacion del timbre + 3 hora minuto y segundo
+#define ULTIMA_ACTIVACION_MIN 281
+#define ULTIMA_ACTIVACION_DIA 282
+#define ULTIMO_ANUNCIO 290 // Direccion donde se encuentra la informacion del ultimo anuncion
 
 
 byte obtenerCantidadHorarios();

@@ -20,7 +20,7 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
@@ -29,18 +29,18 @@ static String comandos[] = {"A+", "A-", "A?", "HS", "H?", "VS", "V?", "LS", "L?"
 //REST Server
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xCC};
 EthernetServer server = EthernetServer(35);
+IPAddress ip(192, 168, 0, 178); 
+
 
 tmElements_t horaActual;
 
 void setup() {
   // put Ayour setup code here, to run once:
+  if(DEBUG){Serial.begin(9600);}
   delay(5000);
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
-  Ethernet.begin(mac);
-  setUdp();
-  server.begin();
-  Serial.begin(9600);
+  inicializarEthernet();
   seActualizoElHorario(10);
   if(DEBUG){Serial.println(F("Inicializo"));}
 }
@@ -61,7 +61,7 @@ void loop() {
     if(DEBUG){Serial.println(F("VOLVIO LA LUZ"));}
     Ethernet.init(53);
     delay(5000);
-    Ethernet.begin(mac);
+    inicializarEthernet();
     if(DEBUG){Serial.println(F("INICIALIZO LA PLACA"));}
   }
 
@@ -74,13 +74,26 @@ void loop() {
     if(DEBUG){Serial.println(F("ACTUALIZACION DIARIA DE HORARIO"));}
     actualizarHorario();
     seActualizoElHorario(horaActual.Wday);
+    if(DEBUG){Serial.print(horaActual.Hour);}
+    if(DEBUG){Serial.print(F(" : "));}
+    if(DEBUG){Serial.print(horaActual.Minute);}
+    if(DEBUG){Serial.print(F("  "));}
+    if(DEBUG){Serial.println(horaActual.Wday);}
   }
 
   if(!estaEnVacaciones() && !estaLibre(horaActual.Wday)){
     for(byte i = 0; i<obtenerCantidadHorarios(); i++){
       if(obtenerHora(i) != obtenerHoraUltimaActivacion() || obtenerMinutos(i) != obtenerMinutoUltimaActivacion() || horaActual.Wday != obtenerDiaUltimaActivacion()){
         if(obtenerHora(i) == horaActual.Hour && obtenerMinutos(i) == horaActual.Minute){
+          if(DEBUG){Serial.println(F("Antes de sonar"));}
+          if(DEBUG){Serial.println(obtenerHoraUltimaActivacion());}
+          if(DEBUG){Serial.println(obtenerMinutoUltimaActivacion());}
+          if(DEBUG){Serial.println(obtenerDiaUltimaActivacion());}
           setearUltimaActivacion(obtenerHora(i), obtenerMinutos(i), horaActual.Wday);
+          if(DEBUG){Serial.println(F("Despues de sonar"));}
+          if(DEBUG){Serial.println(obtenerHoraUltimaActivacion());}
+          if(DEBUG){Serial.println(obtenerMinutoUltimaActivacion());}
+          if(DEBUG){Serial.println(obtenerDiaUltimaActivacion());}
           if(obtenerSilencios(i)==0){
             sonarAlarma(esLargo(i));
           }else if(obtenerSilencios(i)==255){}
@@ -150,4 +163,15 @@ int testRest(String* msg){
   Serial.println(F("Esta es una funcion de prueba"));
   Serial.print(F("Se ha recibido la siguiente linea: "));
   Serial.println(*msg);
+}
+
+void inicializarEthernet(){
+  if (Ethernet.begin(mac) == 0) {
+    if(DEBUG){Serial.println(F("FALLO DHCP"));}
+    Ethernet.begin(mac, ip);
+  }
+  if(DEBUG){Serial.println(F("MI IP ES:"));}
+  if(DEBUG){Serial.println(Ethernet.localIP());}
+  setUdp();
+  server.begin();
 }

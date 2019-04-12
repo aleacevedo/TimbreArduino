@@ -8,7 +8,7 @@
 #include "Memoria.h"
 #include "Acciones.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define CANT_ACCIONES 13
 
 static Funcion acciones[] = {Funcion(agregarUnHorario), Funcion(borrarUnHorario), Funcion(obtenerUnHorario), Funcion(configurarHoraActual), Funcion(obtenerHoraActual), Funcion(configurarModoVacaciones), Funcion(obtenerModoVacaciones), Funcion(configurarDiasLibres), Funcion(obtenerDiasLibres), Funcion(configurarDuracion), Funcion(obtenerDuracion), Funcion(configurarSilencios), Funcion(resetearDispositivo)};
@@ -25,10 +25,9 @@ void setup() {
   // put Ayour setup code here, to run once:
   pinMode(2, OUTPUT);
   pinMode(8, INPUT);
-  Ethernet.begin(mac, ip);
-  server.begin();
-  Serial.begin(9600);
+  inicializarEthernet();
   seActualizoElHorario(10);
+  if(DEBUG){Serial.begin(9600);}
   if(DEBUG){Serial.println(F("Inicializo"));}
 }
 
@@ -37,7 +36,7 @@ void loop() {
   if (digitalRead(8) == 1 && huboCorteDeLuz()) {
     volvioLaLuz();
     if(DEBUG){Serial.println(F("VOLVIO LA LUZ"));}
-    Ethernet.begin(mac, ip);
+    inicializarEthernet();
   }
 
   if(digitalRead(8) == 0 && !huboCorteDeLuz()){
@@ -126,4 +125,9 @@ int testRest(String* msg){
   Serial.println(F("Esta es una funcion de prueba"));
   Serial.print(F("Se ha recibido la siguiente linea: "));
   Serial.println(*msg);
+}
+
+void inicializarEthernet(){
+  Ethernet.begin(mac, ip);
+  server.begin();
 }
